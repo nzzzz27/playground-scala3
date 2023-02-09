@@ -5,7 +5,6 @@ ThisBuild / version      := "0.1.0-SNAPSHOT"
 lazy val http4sVersion  = "0.23.16"
 
 lazy val root = (project in file("."))
-  .enablePlugins(SbtTwirl)
   .settings(
     name := "scala3-app-test",
     libraryDependencies ++= Seq(
