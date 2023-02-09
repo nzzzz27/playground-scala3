@@ -9,7 +9,7 @@ import org.http4s.ember.server.EmberServerBuilder
 object Server extends ResourceApp.Forever:
 
   def run(args: List[String]): Resource[IO, Unit] =
-    val router = routes.Routes.helloWorldService
+    val router = routes.Routes.services
 
     for
       _ <-  EmberServerBuilder

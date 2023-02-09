@@ -13,8 +13,9 @@ lazy val root = (project in file("."))
       "org.http4s" %% "http4s-ember-server" % http4sVersion,
       "org.http4s" %% "http4s-ember-client" % http4sVersion,
 
-      "com.softwaremill.sttp.tapir" %% "tapir-core"          % tapirVersion,
-      "com.softwaremill.sttp.tapir" %% "tapir-http4s-server" % tapirVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-core"              % tapirVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-http4s-server"     % tapirVersion,
+      "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-bundle" % tapirVersion,
       // "org.scalameta" %% "munit" % "0.7.29" % Test,
     )
   )

@@ -15,13 +15,14 @@ import org.http4s.server.staticcontent.*
 
 import sttp.tapir.*
 import sttp.tapir.server.http4s.Http4sServerInterpreter
+import sttp.tapir.swagger.bundle.SwaggerInterpreter
 
 object Routes:
 
   // --- エンドポイント -----------------------------------
   // PublicEndpoint[入力に使う型, エラー型, 出力に使う型, -R]
   // 認証ありの場合： Endpoint[認証に使う型, 入力に使う型, エラー型, 出力に使う型, -R]
-  val helloWorldEP: PublicEndpoint[String, Unit, String, Any] =
+  val helloEP: PublicEndpoint[String, Unit, String, Any] =
     endpoint.get
       .in ("hello" / path[String] ("name") )
       .out (stringBody)
@@ -31,6 +32,12 @@ object Routes:
       .in ("today")
       .out (stringBody)
 
+  val swaggerEPs = SwaggerInterpreter().fromEndpoints[IO](
+    List(helloEP, todayEP),
+    "http4s × tapir × Swagger",
+    "1.0"
+  )
+
   // --- ビジネスロジック -----------------------------------
   def helloLogic(name: String): IO[Either[Unit, String]] =
     s"Hello $name".asRight[Unit].pure[IO]
@@ -39,12 +46,14 @@ object Routes:
     s"Today is ${LocalDate.now()}".asRight[Unit].pure[IO]
 
   // --- エンドポイント + ビジネスロジック -----------------------------------
-  val helloWorldRoute: HttpRoutes[IO] =
-    Http4sServerInterpreter[IO] ().toRoutes (helloWorldEP serverLogic helloLogic)
+  val helloRoute: HttpRoutes[IO] =
+    Http4sServerInterpreter[IO] ().toRoutes (helloEP serverLogic helloLogic)
 
   val todayRoute: HttpRoutes[IO] =
     Http4sServerInterpreter[IO] ().toRoutes (todayEP serverLogic todayLogic)
 
+  val swaggerRoutes: HttpRoutes[IO] = Http4sServerInterpreter[IO]().toRoutes(swaggerEPs)
+
   // --- HttpApp -----------------------------------
-  val helloWorldService: HttpApp[IO] =
-    (helloWorldRoute <+> todayRoute).orNotFound
+  val services: HttpApp[IO] =
+    (helloRoute <+> todayRoute <+> swaggerRoutes).orNotFound
